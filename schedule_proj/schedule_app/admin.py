@@ -7,6 +7,8 @@ admin.site.register(Course)
 admin.site.register(Department)
 admin.site.register(DepartmentBoard)
 
+admin.site.register(Exam)
+
 admin.site.register(GroupSocialLink)
 
 admin.site.register(LessonTimes)

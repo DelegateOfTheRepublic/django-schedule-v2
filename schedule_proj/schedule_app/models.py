@@ -116,6 +116,18 @@ class Teacher(Person):
     teacher_schedule = models.FileField(upload_to=create_user_data_path, validators=[FileExtensionValidator(allowed_extensions=["json"])], blank=True)
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
 
+class Exam(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    consult_date = models.DateTimeField()
+    consult_room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, related_name='consult_room')
+    exam_date = models.DateTimeField()
+    exam_room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
+    is_exam = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f'{self.subject}: {"Экзамен" if self.is_exam else "Пересдача"}'
+
 class Link(models.Model):
     AVAILABLE_PLATFORMS = [
         ('tg', 'Телеграмм'),
