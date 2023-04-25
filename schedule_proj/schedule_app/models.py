@@ -99,7 +99,7 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
     phone = models.CharField(max_length=12)
-    avatar = models.ImageField(_("Image"), upload_to=create_user_data_path)
+    avatar = models.ImageField(_("Image"), upload_to=create_user_data_path, blank=True, null=True)
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
