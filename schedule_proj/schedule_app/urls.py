@@ -2,6 +2,8 @@ from django.urls import include, re_path
 from rest_framework.authtoken.views import obtain_auth_token
 import schedule_app.views.uni_structure_api as uni_structure_api
 import schedule_app.views.uni_staff_api as uni_staff_api
+import schedule_app.views.uni_general_api as uni_general_api
+import schedule_app.views.uni_study_api as uni_study_api
 # from .views import CourseApi, DepartmentApi, DepartmentBoardApi, \
 #                    LessonApi, LinkApi, MyProfileApi, PersonApi, PositionApi, \
 #                    RoleApi, RoomApi, RoomTypeApi, SpecializationApi, \
@@ -40,4 +42,5 @@ urlpatterns = [
     # re_path(r'^specializations/$', SpecializationApi.as_view()),
 
     # re_path(r'^upload_schedule_templates/$', UploadScheduleTemplatesApi.as_view())
-] + uni_structure_api.urls + uni_staff_api.urls
+] + uni_structure_api.urls + uni_staff_api.urls +\
+    uni_general_api.urls + uni_study_api.urls

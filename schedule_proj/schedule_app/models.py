@@ -99,7 +99,7 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
     phone = models.CharField(max_length=12)
-    avatar = models.ImageField(_("Image"), upload_to=create_user_data_path, blank=True, null=True)
+    avatar = models.ImageField(_("Image"), upload_to=create_user_data_path, blank=True, null=True, default='/avatar.svg')
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
@@ -128,38 +128,54 @@ class Exam(models.Model):
     def __str__(self) -> str:
         return f'{self.subject}: {"Экзамен" if self.is_exam else "Пересдача"}'
 
+class LinkPlatform(models.Model):
+    name = models.CharField(max_length=64)
+    short_name = models.CharField(max_length=32, blank=True, null=True)
+    icon = models.FileField(upload_to=default_platform_icon_path)
+
+    def __str__(self) -> str:
+        return self.name
+
 class Link(models.Model):
     AVAILABLE_PLATFORMS = [
         ('tg', 'Телеграмм'),
         ('wapp', 'What\'s app'),
         ('discord', 'Discord'),
-        ('vk', 'ВКонтакте')
+        ('vk', 'ВКонтакте'),
+        ('godrive', 'Google Drive'),
+        ('yadisk', 'Yandex Disk')
     ]
 
     title = models.CharField(max_length=256)
-    platform_name = models.CharField(choices=AVAILABLE_PLATFORMS, max_length=64)
+    platform = models.ForeignKey(LinkPlatform, on_delete=models.CASCADE)
     link = models.CharField(max_length=512)
-    icon = models.ImageField(upload_to='platform_icons/', blank=True, default=f'platforms_icons/{platform_name}')
     meeting_ident = models.CharField(max_length=32, blank=True, null=True)
     passcode = models.CharField(max_length=16, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, blank=True, null=True)
+    study_group = models.ForeignKey(StudyGroup, on_delete=models.CASCADE, blank=True, null=True)
     is_temp = models.BooleanField(default=False)
-    meeting_temp_time = models.IntegerField(blank=True)
+    meeting_temp_time = models.IntegerField(default=0)
 
     def __str__(self) -> str:
-        return self.platform_name
+        return self.title
 
-class GroupSocialLink(models.Model):
-    study_group = models.ForeignKey(StudyGroup, on_delete=models.SET_NULL, null=True)
-    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
-    link = models.ForeignKey(Link, on_delete=models.SET_NULL, null=True)
+# class GroupSocialLink(models.Model):
+#     study_group = models.ForeignKey(StudyGroup, on_delete=models.SET_NULL, null=True)
+#     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
+#     link = models.ForeignKey(Link, on_delete=models.SET_NULL, null=True)
+
+#     def __str__(self) -> str:
+#         return f'{self.link.platform_name}: {self.subject}'
+
+class Folder(models.Model):
+    name = models.CharField(max_length=128, unique=True)
 
     def __str__(self) -> str:
-        return f'{self.link.platform_name}: {self.subject}'
+        return self.name
 
 class Template(models.Model):
     title = models.CharField(max_length=128)
-    folder_name = models.CharField(max_length=128, blank=True)
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, blank=True, null=True)
     template_file = models.FileField(upload_to=templates)
 
     def __str__(self) -> str:
@@ -182,7 +198,6 @@ class Lesson(models.Model):
     teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     study_form = models.ForeignKey(StudyForm, on_delete=models.CASCADE, default=0, null=True)
-    links = models.CharField(max_length=8, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.subject

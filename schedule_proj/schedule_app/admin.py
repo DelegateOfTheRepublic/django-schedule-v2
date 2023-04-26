@@ -9,12 +9,15 @@ admin.site.register(DepartmentBoard)
 
 admin.site.register(Exam)
 
-admin.site.register(GroupSocialLink)
+admin.site.register(Folder)
+
+# admin.site.register(GroupSocialLink)
 
 admin.site.register(LessonTimes)
 admin.site.register(LessonStatuses)
 admin.site.register(Lesson)
 admin.site.register(Link)
+admin.site.register(LinkPlatform)
 
 admin.site.register(Position)
 admin.site.register(Person)
